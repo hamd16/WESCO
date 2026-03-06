@@ -1,0 +1,50 @@
+
+body{
+    background:#dfe9e3;
+}
+
+.login-card{
+    max-width:900px;
+    margin:auto;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 0 20px rgba(0,0,0,0.1);
+}
+
+.left-panel{
+    background:#c8d9ce;
+    text-align:center;
+    padding:60px 40px;
+}
+
+.left-panel img{
+    width:140px;
+}
+
+.left-panel h4{
+    color:#b00000;
+    font-weight:600;
+    margin-top:20px;
+}
+
+.right-panel{
+    padding:50px;
+    background:white;
+}
+
+.login-btn{
+    background:#20b25d;
+    border:none;
+}
+
+.login-btn:hover{
+    background:#199c50;
+}
+
+.footer-text{
+    text-align:center;
+    margin-top:20px;
+    font-size:13px;
+    color:#2d6a4f;
+}
+
